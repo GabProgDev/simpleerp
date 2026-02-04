@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16
+    container_name: simpleerp_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: simpleerp
+      POSTGRES_PASSWORD: simpleerp123
+      POSTGRES_DB: simpleerp
+    ports:
+      - "5432:5432"
+    volumes:
+      - simpleerp_pgdata:/var/lib/postgresql/data
+
+volumes:
+  simpleerp_pgdata:

@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  VENDEDOR
+  FINANCEIRO
+  ESTOQUE
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  username     String   @unique
+  email        String   @unique
+  phone        String?
+  role         Role     @default(ADMIN)
+  passwordHash String
+  isActive     Boolean  @default(true)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([role])
+  @@index([isActive])
+}
+
+model Customer {
+  id        String   @id @default(uuid())
+  name      String
+  document  String   @unique // CPF/CNPJ
+
+  phone     String
+  email     String
+  address   String
+  notes     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+}
+
+model ChatbotConfig {
+  id                    String   @id @default(uuid())
+  enabled               Boolean  @default(false)
+  adminNumber           String
+
+  // Strings com JSON (o seu código faz JSON.stringify)
+  triggerKeywords        String
+  menuOptions            String
+
+  backToMenuKeyword      String
+  greetingTemplate       String
+  menuText               String
+  invalidOptionText      String
+  servicesText           String
+  hoursText              String
+  attendantIntroText     String
+  attendantReceivedText  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

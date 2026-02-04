@@ -1,0 +1,5 @@
+{
+  "name": "SimpleERP",
+  "description": "A modular, scalable ERP starter built with React, TypeScript, and Tailwind CSS, featuring a complete Customers module with LocalStorage persistence.",
+  "requestFramePermissions": []
+}
