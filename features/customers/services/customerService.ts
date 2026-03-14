@@ -3,7 +3,7 @@ import { apiClient } from '../../../shared/services/apiClient';
 
 const STORAGE_KEY = 'simple_erp_customers';
 const DELAY_MS = 300;
-const USE_API = (import.meta as any).env?.VITE_USE_API === 'true';
+const USE_API = import.meta.env.VITE_USE_API === 'true';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

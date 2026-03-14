@@ -1,4 +1,4 @@
-const API_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3333';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3333';
 const TOKEN_KEY = 'simpleerp_token';
 
 interface FetchOptions extends RequestInit {

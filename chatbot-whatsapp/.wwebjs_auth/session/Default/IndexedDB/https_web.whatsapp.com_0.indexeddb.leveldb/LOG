@@ -1,0 +1,14 @@
+2026/02/04-11:05:04.182 1d78 Reusing MANIFEST C:\Users\User\Desktop\simpleerp -base\simpleerp\chatbot-whatsapp\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/02/04-11:05:04.185 1d78 Recovering log #144
+2026/02/04-11:05:04.251 1d78 Reusing old log C:\Users\User\Desktop\simpleerp -base\simpleerp\chatbot-whatsapp\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000144.log 
+2026/02/04-11:05:08.931 4754 Level-0 table #154: started
+2026/02/04-11:05:08.994 4754 Level-0 table #154: 1135229 bytes OK
+2026/02/04-11:05:09.007 4754 Delete type=0 #144
+2026/02/04-11:05:09.180 1d78 Compacting 1@1 + 5@2 files
+2026/02/04-11:05:09.319 1d78 Generated table #155@1: 52935 keys, 2216725 bytes
+2026/02/04-11:05:09.426 1d78 Generated table #156@1: 31245 keys, 2190953 bytes
+2026/02/04-11:05:09.509 1d78 Generated table #157@1: 11334 keys, 2186744 bytes
+2026/02/04-11:05:09.622 1d78 Generated table #158@1: 26596 keys, 2188121 bytes
+2026/02/04-11:05:09.738 1d78 Generated table #159@1: 88356 keys, 2199739 bytes
+2026/02/04-11:05:09.738 1d78 Compacted 1@1 + 5@2 files => 10982282 bytes
+2026/02/04-11:05:09.745 1d78 compacted to: files[ 0 0 6 0 0 0 0 ]

@@ -4,7 +4,7 @@ import { EmployeeRole } from '../../employees/types/Employee';
 import { apiClient } from '../../../shared/services/apiClient';
 
 const SESSION_KEY = 'simpleerp_session';
-const USE_API = (import.meta as any).env?.VITE_USE_API === 'true';
+const USE_API = import.meta.env.VITE_USE_API === 'true';
 
 export const authService = {
   login: async (username: string, password: string): Promise<UserSession> => {

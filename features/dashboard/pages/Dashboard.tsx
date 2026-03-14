@@ -43,7 +43,7 @@ export const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [apiStatus, setApiStatus] = useState<'LOCAL' | 'ONLINE' | 'OFFLINE'>('LOCAL');
 
-  const useApi = (import.meta as any).env?.VITE_USE_API === 'true';
+  const useApi = import.meta.env.VITE_USE_API === 'true';
 
   useEffect(() => {
     const loadData = async () => {

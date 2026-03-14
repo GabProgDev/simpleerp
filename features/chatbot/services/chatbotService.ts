@@ -3,7 +3,7 @@ import { ChatbotConfig, ChatbotConfigFormData } from '../types/ChatbotConfig';
 
 const STORAGE_KEY = 'simple_erp_chatbot_config';
 const DELAY_MS = 300;
-const USE_API = (import.meta as any).env?.VITE_USE_API === 'true';
+const USE_API = import.meta.env.VITE_USE_API === 'true';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
