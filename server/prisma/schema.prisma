@@ -7,12 +7,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ─── ENUMS ───────────────────────────────────────────
+
 enum Role {
   ADMIN
   VENDEDOR
   FINANCEIRO
   ESTOQUE
 }
+
+enum OrderStatus {
+  ORCAMENTO
+  CONFIRMADO
+  EM_SEPARACAO
+  ENVIADO
+  ENTREGUE
+  CANCELADO
+}
+
+enum PaymentMethod {
+  DINHEIRO
+  CARTAO_CREDITO
+  CARTAO_DEBITO
+  PIX
+  BOLETO
+  TRANSFERENCIA
+}
+
+enum TransactionType {
+  RECEITA
+  DESPESA
+}
+
+enum TransactionStatus {
+  PENDENTE
+  PAGO
+  CANCELADO
+}
+
+enum StockMovementType {
+  ENTRADA
+  SAIDA
+  AJUSTE
+}
+
+// ─── USUÁRIOS ────────────────────────────────────────
 
 model User {
   id           String   @id @default(uuid())
@@ -23,48 +62,223 @@ model User {
   role         Role     @default(ADMIN)
   passwordHash String
   isActive     Boolean  @default(true)
-
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  orders       Order[]
+  transactions Transaction[]
 
   @@index([role])
   @@index([isActive])
 }
 
+// ─── CLIENTES ────────────────────────────────────────
+
 model Customer {
   id        String   @id @default(uuid())
   name      String
-  document  String   @unique // CPF/CNPJ
-
+  document  String   @unique
   phone     String
   email     String
   address   String
   notes     String?
-
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  orders Order[]
+
+  @@index([name])
+  @@index([document])
+}
+
+// ─── FORNECEDORES ────────────────────────────────────
+
+model Supplier {
+  id        String   @id @default(uuid())
+  name      String
+  document  String   @unique
+  phone     String
+  email     String?
+  address   String?
+  contact   String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products       Product[]
+  stockMovements StockMovement[]
 
   @@index([name])
 }
 
-model ChatbotConfig {
-  id                    String   @id @default(uuid())
-  enabled               Boolean  @default(false)
-  adminNumber           String
+// ─── CATEGORIAS DE PRODUTOS ──────────────────────────
 
-  // Strings com JSON (o seu código faz JSON.stringify)
-  triggerKeywords        String
-  menuOptions            String
-
-  backToMenuKeyword      String
-  greetingTemplate       String
-  menuText               String
-  invalidOptionText      String
-  servicesText           String
-  hoursText              String
-  attendantIntroText     String
-  attendantReceivedText  String
-
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  description String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  products Product[]
+}
+
+// ─── PRODUTOS ────────────────────────────────────────
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  sku         String   @unique
+  barcode     String?  @unique
+  price       Decimal  @db.Decimal(10, 2)
+  costPrice   Decimal  @db.Decimal(10, 2)
+  stock       Int      @default(0)
+  minStock    Int      @default(0)
+  unit        String   @default("UN")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  supplierId String?
+  supplier   Supplier? @relation(fields: [supplierId], references: [id])
+
+  orderItems     OrderItem[]
+  stockMovements StockMovement[]
+
+  @@index([name])
+  @@index([sku])
+  @@index([isActive])
+}
+
+// ─── PEDIDOS / VENDAS ────────────────────────────────
+
+model Order {
+  id          String      @id @default(uuid())
+  number      Int         @unique @default(autoincrement())
+  status      OrderStatus @default(ORCAMENTO)
+  notes       String?
+  discount    Decimal     @default(0) @db.Decimal(10, 2)
+  total       Decimal     @db.Decimal(10, 2)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  items        OrderItem[]
+  transactions Transaction[]
+  invoice      Invoice?
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ─── ITENS DO PEDIDO ─────────────────────────────────
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  quantity  Int
+  unitPrice Decimal @db.Decimal(10, 2)
+  discount  Decimal @default(0) @db.Decimal(10, 2)
+  total     Decimal @db.Decimal(10, 2)
+
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+}
+
+// ─── FINANCEIRO ──────────────────────────────────────
+
+model Transaction {
+  id          String            @id @default(uuid())
+  description String
+  amount      Decimal           @db.Decimal(10, 2)
+  type        TransactionType
+  status      TransactionStatus @default(PENDENTE)
+  method      PaymentMethod?
+  dueDate     DateTime?
+  paidAt      DateTime?
+  notes       String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  orderId String?
+  order   Order?  @relation(fields: [orderId], references: [id])
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  @@index([type])
+  @@index([status])
+  @@index([dueDate])
+}
+
+// ─── MOVIMENTAÇÃO DE ESTOQUE ─────────────────────────
+
+model StockMovement {
+  id        String            @id @default(uuid())
+  type      StockMovementType
+  quantity  Int
+  reason    String?
+  createdAt DateTime          @default(now())
+
+  productId  String
+  product    Product   @relation(fields: [productId], references: [id])
+
+  supplierId String?
+  supplier   Supplier? @relation(fields: [supplierId], references: [id])
+
+  @@index([productId])
+  @@index([type])
+}
+
+// ─── NOTAS FISCAIS ───────────────────────────────────
+
+model Invoice {
+  id          String   @id @default(uuid())
+  number      String   @unique
+  series      String
+  accessKey   String?  @unique
+  xmlContent  String?
+  status      String   @default("PENDENTE")
+  issuedAt    DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orderId String @unique
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  @@index([status])
+}
+
+// ─── CHATBOT ─────────────────────────────────────────
+
+model ChatbotConfig {
+  id                   String   @id @default(uuid())
+  enabled              Boolean  @default(false)
+  adminNumber          String
+  triggerKeywords      String
+  menuOptions          String
+  backToMenuKeyword    String
+  greetingTemplate     String
+  menuText             String
+  invalidOptionText    String
+  servicesText         String
+  hoursText            String
+  attendantIntroText   String
+  attendantReceivedText String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }
