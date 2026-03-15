@@ -6,6 +6,7 @@ import authRoutes from "./routes/authRoutes";
 import customerRoutes from "./routes/customerRoutes";
 import chatbotRoutes from "./routes/chatbotRoutes";
 import orderRoutes from "./routes/orderRoutes";
+import productRoutes from "./routes/productRoutes";
 
 dotenv.config();
 
@@ -46,6 +47,7 @@ app.get("/health", (_req: Request, res: Response) => {
 app.use("/auth", authRoutes);
 app.use("/customers", customerRoutes);
 app.use("/orders", orderRoutes);
+app.use("/products", productRoutes);
 app.use("/chatbot", chatbotRoutes);
 
 app.listen(PORT, "0.0.0.0", () => {
